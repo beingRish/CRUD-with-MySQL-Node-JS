@@ -9,10 +9,8 @@ module.exports.getAllEmployees = async () => {
 module.exports.getEmployeeById = async (EmpID) => {
     
     try {
-        console.log(EmpID);
-        const [records] = await db.query(`SELECT * FROM employee WHERE EmpID = ${EmpID}`);
-        console.log(records);
-        return records;
+        const [[record]] = await db.query(`SELECT * FROM employee WHERE EmpID = ${EmpID}`);
+        return record;
     } catch (err) {
         console.error(err);
         // Handle the error or throw it further if needed
@@ -24,10 +22,8 @@ module.exports.getEmployeeById = async (EmpID) => {
 module.exports.DeleteEmployee = async (EmpID) => {
     
     try {
-        console.log(EmpID);
-        const [records] = await db.query(`DELETE from employee WHERE EmpID = ${EmpID}`);
-        console.log(records);
-        return records;
+        const [{affectedRows}] = await db.query(`DELETE from employee WHERE EmpID = ${EmpID}`);
+        return affectedRows;
     } catch (err) {
         console.error(err);
         // Handle the error or throw it further if needed
@@ -35,3 +31,15 @@ module.exports.DeleteEmployee = async (EmpID) => {
     }
 }
 
+
+module.exports.addOrEditEmployee = async (obj, EmpID=0) => {
+    
+    try {
+        const [[[{affectedRows}]]] = await db.query("CALL employee_add_or_edit(?,?,?,?)", [EmpID, obj.Name, obj.EmpCode, obj.Salary]);
+        return affectedRows;
+    } catch (err) {
+        console.error(err);
+        // Handle the error or throw it further if needed
+        throw err;
+    }
+}
